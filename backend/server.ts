@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 class Zone {
   constructor(public zoneId: string, public zoneName: string, public zoneType: string,
-              public locationId: string, public locationName: string) {
+              public locationId: string, public locationName: string, public temperature: number) {
   }
 }
 
@@ -88,6 +88,7 @@ class HoneywellClient {
 
 
   serverGet(subpath: string, callback: (param: any) => void) {
+    console.log(`fetch ${subpath}`);
     https.get({
       host: 'tccna.honeywell.com',
       headers: {
@@ -115,25 +116,25 @@ class HoneywellClient {
   getInstallation() {
     this.serverGet(`location/installationInfo?userId=${this._account.userId}` +
             `&includeTemperatureControlSystems=True`, (obj: any) => {
-      console.log(`first ${obj[0].gateways}`);
       for (let location of obj) {
-        for (let gateway of location.gateways) {
-          for (let system of gateway.temperatureControlSystems) {
-            for (let zone of system.zones) {
-              console.log(`zone ${JSON.stringify(zone)}`);
-              const nzone = new Zone(zone.zoneId, zone.name, zone.zoneType,
-                                      location.locationId, location.name);
-              this.zones.push(nzone);
-            }
-          }
-          this.getLocationStatus(location);
-        }
+          this.getLocationStatus(location.locationInfo.locationId, location.locationInfo.name);
       }
     });
   }
 
-  getLocationStatus(location) {
-    
+  getLocationStatus(locationId: string, locationName: string) {
+    this.serverGet(`/location/${locationId}/status?includeTemperatureControlSystems=True`,
+     (obj: any) => {
+       for (let gateway of obj.gateways) {
+          for (let system of gateway.temperatureControlSystems) {
+            for (let zone of system.zones) {
+              const nzone = new Zone(zone.zoneId, zone.name, zone.zoneType,
+                                     locationId, locationName, zone.temperature);
+              this.zones.push(nzone);
+            }
+          }
+       }
+    });
   }
 
 }
