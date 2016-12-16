@@ -62,10 +62,28 @@ function login() {
     res.on('data', (d: string) => {
       let login: LoginResponse = JSON.parse(d);
       console.log('data', login.access_token);
+      getUserAccount(login.access_token);
     });
   });
   postReq.write(querystring.stringify(data));
   postReq.end();
+}
+
+function getUserAccount(accessToken: string) {
+  https.get({
+    host: 'tccna.honeywell.com',
+    headers: {
+      Authorization: `bearer ${accessToken}`,
+      applicationId : 'b013aa26-9724-4dbd-8897-048b9aada249',
+      Accept: 'application/json, application/xml, text/json, text/x-json, text/javascript, text/xml'
+    },
+    path: '/WebAPI/emea/api/v1/userAccount'},
+    ((res2: IncomingMessage) => {
+        res2.setEncoding('utf8');
+        res2.on('data', (d2: string) => {
+          console.log(d2);
+        });
+    }));
 }
 
 console.log(`user ${credentials.username}`);
