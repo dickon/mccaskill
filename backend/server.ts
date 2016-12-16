@@ -87,6 +87,7 @@ class HoneywellClient {
   }
 
   getUserAccount() {
+
     https.get({
       host: 'tccna.honeywell.com',
       headers: {
@@ -131,10 +132,15 @@ class HoneywellClient {
                     this.zones.push(nzone);
                   }
                 }
+                this.getLocationStatus(location);
               }
             }
           });
       }));
+  }
+
+  getLocationStatus(location) {
+ 
   }
 
 }
