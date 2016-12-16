@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-
+import { Http, Response } from '@angular/http';
 import { AppState } from '../app.service';
 import { Title } from './title';
 import { XLarge } from './x-large';
+import { Observable } from 'rxjs/Rx';
+
 
 @Component({
   // The selector is what angular internally uses
@@ -21,13 +23,16 @@ import { XLarge } from './x-large';
 export class HomeComponent {
   // Set our default values
   localState = { value: '' };
+  public zone: string = "Loading...";
   // TypeScript public modifiers
-  constructor(public appState: AppState, public title: Title) {
+  constructor(public appState: AppState, public title: Title, private http: Http) {
 
   }
 
   ngOnInit() {
     console.log('hello `Home` component');
+    this.http.get('http://localhost:3001/mock').subscribe( (value:Response) => 
+      this.zone = value.text());
     // this.title.getData().subscribe(data => this.data = data);
   }
 
