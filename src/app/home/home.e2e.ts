@@ -14,9 +14,14 @@ describe('App', () => {
     expect(subject).toEqual(result);
   });
 
-  it('should have DickonStudy in the page', () => {
+  it('should have DickonStudy temperature in the page', () => {
     let studytemp = element(by.id('DickonStudyTemperature')).getText();
     expect(studytemp).toMatch(/\d+/);
+  });
+
+  it('should have DickonStudy label in the page', () => {
+    let studytemp = element(by.id('DickonStudyLabel')).getText();
+    expect(studytemp).toEqual("DickonStudy");
   });
 
 });
