@@ -4,7 +4,7 @@ import { AppState } from '../app.service';
 import { Title } from './title';
 import { XLarge } from './x-large';
 import { Observable } from 'rxjs/Rx';
-
+import * as d3 from 'd3';
 
 @Component({
   // The selector is what angular internally uses
@@ -23,7 +23,6 @@ import { Observable } from 'rxjs/Rx';
 export class HomeComponent {
   // Set our default values
   localState = { value: '' };
-  public zone: string = 'Loading...';
   // TypeScript public modifiers
   constructor(public appState: AppState, public title: Title, private http: Http) {
 
@@ -31,8 +30,11 @@ export class HomeComponent {
 
   ngOnInit() {
     console.log('hello `Home` component');
-    this.http.get('http://localhost:3001/mock').subscribe( (value: Response) =>
-      this.zone = value.text());
+    this.http.get('http://localhost:3001/mock').subscribe( (res: Response) => {
+      let zones = res.json();
+      d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr').
+        append('td').attr('id', (z:any)=>z.zoneName+'Temperature').text((z:any) => z.temperature);
+    });
     // this.title.getData().subscribe(data => this.data = data);
   }
 
