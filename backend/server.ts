@@ -14,7 +14,7 @@ interface Credentials {
 }
 
 interface LoginResponse {
-  access_token: string; 
+  access_token: string;
 }
 
 let credentials: Credentials = JSON.parse(text);
@@ -52,7 +52,8 @@ function login() {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
       Authorization:	'Basic YjAxM2FhMjYtOTcyNC00ZGJkLTg4OTctMDQ4YjlhYWRhMjQ5OnRlc3Q=',
-      Accept: 'application/json, application/xml, text/json, text/x-json, text/javascript, text/xml',
+      Accept: 'application/json, application/xml, text/json, '+
+              'text/x-json, text/javascript, text/xml',
     }
   }, (res: IncomingMessage ) => {
     console.log('got response');
