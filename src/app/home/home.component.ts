@@ -23,7 +23,7 @@ import { Observable } from 'rxjs/Rx';
 export class HomeComponent {
   // Set our default values
   localState = { value: '' };
-  public zone: string = "Loading...";
+  public zone: string = 'Loading...';
   // TypeScript public modifiers
   constructor(public appState: AppState, public title: Title, private http: Http) {
 
@@ -31,7 +31,7 @@ export class HomeComponent {
 
   ngOnInit() {
     console.log('hello `Home` component');
-    this.http.get('http://localhost:3001/mock').subscribe( (value:Response) => 
+    this.http.get('http://localhost:3001/mock').subscribe( (value: Response) =>
       this.zone = value.text());
     // this.title.getData().subscribe(data => this.data = data);
   }
