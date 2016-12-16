@@ -52,7 +52,7 @@ function login() {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
       Authorization:	'Basic YjAxM2FhMjYtOTcyNC00ZGJkLTg4OTctMDQ4YjlhYWRhMjQ5OnRlc3Q=',
-      Accept: 'application/json, application/xml, text/json, '+
+      Accept: 'application/json, application/xml, text/json, ' +
               'text/x-json, text/javascript, text/xml',
     }
   }, (res: IncomingMessage ) => {
@@ -60,7 +60,7 @@ function login() {
     console.log('statusCode:', res.statusCode);
     res.setEncoding('utf8');
     res.on('data', (d: string) => {
-      let login : LoginResponse = JSON.parse(d);
+      let login: LoginResponse = JSON.parse(d);
       console.log('data', login.access_token);
     });
   });
