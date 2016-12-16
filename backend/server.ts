@@ -147,8 +147,7 @@ app.get('/dickon', (req, res) => {
 });
 
 app.get('/mock', (req, res) => {
-  res.send(JSON.stringify(['LivingRoom', 'MasterBed', 'Ensuite', 'DressingRoom', 'DickonStudy',
-     'DiningRoom', 'GuestSuite', 'Kitchen', 'Utility', 'DownOther', 'ServerRoom', 'JennyStudy']));
+  res.send(JSON.stringify([{zoneName: 'DickonStudy', temperature: 20}]));
 });
 
 app.listen(3001, () => console.log('started on port 3001'));
