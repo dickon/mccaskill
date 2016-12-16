@@ -86,8 +86,8 @@ class HoneywellClient {
     postReq.end();
   }
 
-  getUserAccount() {
 
+  serverGet(subpath: string, callback: (param: any) => void) {
     https.get({
       host: 'tccna.honeywell.com',
       headers: {
@@ -96,51 +96,44 @@ class HoneywellClient {
         Accept: 'application/json, application/xml, text/json, ' +
               'text/x-json, text/javascript, text/xml'
       },
-      path: '/WebAPI/emea/api/v1/userAccount'},
+      path: `/WebAPI/emea/api/v1/${subpath}`},
       ((res2: IncomingMessage) => {
           res2.setEncoding('utf8');
           res2.on('data', (d2: string) => {
-            this._account = JSON.parse(d2);
-            this.getInstallation();
+            callback(JSON.parse(d2));
           });
       }));
+  }
+
+  getUserAccount() {
+    this.serverGet('userAccount', ((data) => {
+      this._account = data;
+      this.getInstallation();
+    }));
   }
 
   getInstallation() {
-     https.get({
-      host: 'tccna.honeywell.com',
-      headers: {
-        Authorization: `bearer ${this._accessToken}`,
-        applicationId : 'b013aa26-9724-4dbd-8897-048b9aada249',
-        Accept: 'application/json, application/xml, text/json, ' +
-              'text/x-json, text/javascript, text/xml'
-      },
-      path: `/WebAPI/emea/api/v1/location/installationInfo?userId=${this._account.userId}` +
-            `&includeTemperatureControlSystems=True`},
-      ((res: IncomingMessage) => {
-          res.setEncoding('utf8');
-          res.on('data', (data: string) => {
-            console.log(`get ${data}`);
-            const obj = JSON.parse(data);
-            console.log(`first ${obj[0].gateways}`);
-            for (let location of obj) {
-              for (let gateway of location.gateways) {
-                for (let system of gateway.temperatureControlSystems) {
-                  for (let zone of system.zones) {
-                    const nzone = new Zone(zone.zoneId, zone.name, zone.zoneType,
-                                           location.locationId, location.name);
-                    this.zones.push(nzone);
-                  }
-                }
-                this.getLocationStatus(location);
-              }
+    this.serverGet(`location/installationInfo?userId=${this._account.userId}` +
+            `&includeTemperatureControlSystems=True`, (obj: any) => {
+      console.log(`first ${obj[0].gateways}`);
+      for (let location of obj) {
+        for (let gateway of location.gateways) {
+          for (let system of gateway.temperatureControlSystems) {
+            for (let zone of system.zones) {
+              console.log(`zone ${JSON.stringify(zone)}`);
+              const nzone = new Zone(zone.zoneId, zone.name, zone.zoneType,
+                                      location.locationId, location.name);
+              this.zones.push(nzone);
             }
-          });
-      }));
+          }
+          this.getLocationStatus(location);
+        }
+      }
+    });
   }
 
   getLocationStatus(location) {
- 
+    
   }
 
 }
