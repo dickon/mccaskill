@@ -62,3 +62,6 @@ npm-debug.log
 *.swp
 src/server/server.js
 src/server/credentials.json
+backend/credentials.json
+backend/typings/tsd.d.ts
+backend/typings/node/node-0.12.d.ts
