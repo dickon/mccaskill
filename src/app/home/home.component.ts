@@ -32,8 +32,9 @@ export class HomeComponent {
     console.log('hello `Home` component');
     this.http.get('http://localhost:3001/mock').subscribe( (res: Response) => {
       let zones = res.json();
-      d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr').
-        append('td').attr('id', (z:any)=>z.zoneName+'Temperature').text((z:any) => z.temperature);
+      d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr')
+        .append('td').attr('id', (z: any) => z.zoneName + 'Temperature')
+        .text((z: any) => z.temperature);
     });
     // this.title.getData().subscribe(data => this.data = data);
   }
