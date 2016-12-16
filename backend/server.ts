@@ -6,7 +6,6 @@ import * as querystring from 'querystring';
 
 let app = express();
 
-let text = fs.readFileSync('credentials.json', 'utf8');
 interface Credentials {
   username: string;
   password: string;
@@ -29,22 +28,22 @@ interface AccountInfo {
   language: string;
 }
 
-let credentials: Credentials = JSON.parse(text);
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Header', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
-app.get('/mock', (req, res) => {
-  res.send('DICKONSTUDY');
-});
 
 class HoneywellClient {
+  public zoneNames: string[] = [];
   private _accessToken: string;
   private _account: AccountInfo;
-
+  private _credentials: Credentials;
   login() {
+    const text = fs.readFileSync('credentials.json', 'utf8');
+    this._credentials = JSON.parse(text);
     console.log('getData starting v2');
     const data = {
       'Content-Type':	'application/x-www-form-urlencoded; charset=utf-8',
@@ -53,8 +52,8 @@ class HoneywellClient {
       'Pragma':	'no-cache',
       'grant_type':	'password',
       'scope': 'EMEA-V1-Basic EMEA-V1-Anonymous EMEA-V1-Get-Current-User-Account',
-      'Username': credentials.username,
-      'Password':	credentials.password,
+      'Username': this._credentials.username,
+      'Password':	this._credentials.password,
       'Connection':	'Keep-Alive'
     };
 
@@ -62,7 +61,7 @@ class HoneywellClient {
       host: 'tccna.honeywell.com',
       port: 443,
       path: '/Auth/OAuth/Token',
-      auth: credentials.username + ':' + credentials.password,
+      auth: this._credentials.username + ':' + this._credentials.password,
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
@@ -71,8 +70,6 @@ class HoneywellClient {
                 'text/x-json, text/javascript, text/xml',
       }
     }, (res: IncomingMessage ) => {
-      console.log('got response');
-      console.log('statusCode:', res.statusCode);
       res.setEncoding('utf8');
       res.on('data', (d: string) => {
         let login: LoginResponse = JSON.parse(d);
@@ -118,6 +115,16 @@ class HoneywellClient {
           res.on('data', (data: string) => {
             console.log(`get ${data}`);
             const obj = JSON.parse(data);
+            console.log(`first ${obj[0].gateways}`)
+            for (let location of obj) {
+              for (let gateway of location.gateways) {
+                for (let system of gateway.temperatureControlSystems) {
+                  for (let zone of system.zones) {
+                    this.zoneNames.push(zone.name);
+                  }
+                }
+              }
+            }
           });
       }));
   }
@@ -128,8 +135,12 @@ let hcli = (new HoneywellClient());
 hcli.login();
 
 app.get('/dickon', (req, res) => {
+  res.send(JSON.stringify(hcli.zoneNames.join()));
 });
 
+app.get('/mock', (req, res) => {
+  res.send(JSON.stringify(['LivingRoom', 'MasterBed', 'Ensuite', 'DressingRoom', 'DickonStudy', 'DiningRoom', 'GuestSuite', 'Kitchen', 'Utility', 'DownOther', 'ServerRoom', 'JennyStudy']));
+});
 
 app.listen(3001, () => console.log('started on port 3001'));
 

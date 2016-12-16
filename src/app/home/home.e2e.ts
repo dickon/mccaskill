@@ -16,7 +16,7 @@ describe('App', () => {
 
   it('should have DickonStudy in the page', () => {
     let subject = element(by.id('zones')).getText();
-    let result  = 'DICKONSTUDY';
+    let result  = 'DickonStudy';
     expect(subject).toContain(result);
   });
 
