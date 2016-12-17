@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as https from 'https';
 import { IncomingMessage } from 'http';
 import * as querystring from 'querystring';
+import { ZoneInterface } from '../ServerInterfaces';
 
 let app = express();
 
@@ -35,14 +36,14 @@ app.use((req, res, next) => {
   next();
 });
 
-class Zone {
+class Zone implements ZoneInterface {
   constructor(public zoneId: string, public zoneName: string, public zoneType: string,
               public locationId: string, public locationName: string, public temperature: number) {
   }
 }
 
 class HoneywellClient {
-  public zones: Zone[] = [];
+  public zones: ZoneInterface[] = [];
   private _accessToken: string;
   private _account: AccountInfo;
   private _credentials: Credentials;
