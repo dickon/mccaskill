@@ -7,8 +7,11 @@ import { Observable } from 'rxjs/Rx';
 import * as d3 from 'd3';
 import * as scale from 'd3-scale';
 
+
 function rgbTemperature(temp: number) {
-  var l = d3.scaleLinear().domain([0,40]).range([400, 700])(temp);
+  // from http://stackoverflow.com/questions/3407942/rgb-values-of-visible-spectrum
+
+  var l = d3.scaleLinear().domain([5,35]).range([400, 700])(temp);
   var t = 0;
   var r = 0, g = 0, b = 0;
   if ((l>=400.0)&&(l<410.0)) { t=(l-400.0)/(410.0-400.0); r=    +(0.33*t)-(0.20*t*t); }
