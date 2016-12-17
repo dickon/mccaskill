@@ -6,7 +6,7 @@ import { XLarge } from './x-large';
 import { Observable } from 'rxjs/Rx';
 import * as d3 from 'd3';
 import * as scale from 'd3-scale';
-
+import { ZoneInterface } from '../../../ServerInterfaces';
 
 function rgbTemperature(temp: number) {
   // from http://stackoverflow.com/questions/3407942/rgb-values-of-visible-spectrum
@@ -52,16 +52,16 @@ export class HomeComponent {
   ngOnInit() {
     console.log('hello `Home` component');
     this.http.get('http://localhost:3001/dickon').subscribe( (res: Response) => {
-      let zones = res.json();
+      let zones: ZoneInterface[] = res.json();
       console.log(res.text());
       let newrows = d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr')
-      newrows.append('td').attr('id', (z: any) => z.zoneName + 'Label')
+      newrows.append('td').attr('id', (z: ZoneInterface) => z.zoneName + 'Label')
         .attr('class', 'ZoneLabel');
-      newrows.append('td').attr('id', (z: any) => z.zoneName + 'Temperature')
+      newrows.append('td').attr('id', (z: ZoneInterface) => z.zoneName + 'Temperature')
         .attr('class', 'ZoneTemperature');
       d3.select('#zonesTable').selectAll('.ZoneTemperature')
         .data(zones).text((z: any) => z.temperature)
-        .attr('style', ((z:any) => 'background-color: '+rgbTemperature(z.temperature)));
+        .attr('style', ((z:any) => 'background-color: ' + rgbTemperature(z.temperature)));
       d3.select('#zonesTable').selectAll('.ZoneLabel').data(zones).text((z: any) => z.zoneName);
 
     });
