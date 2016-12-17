@@ -32,9 +32,15 @@ export class HomeComponent {
     console.log('hello `Home` component');
     this.http.get('http://localhost:3001/mock').subscribe( (res: Response) => {
       let zones = res.json();
-      d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr')
-        .append('td').attr('id', (z: any) => z.zoneName + 'Temperature')
-        .text((z: any) => z.temperature);
+      console.log(res.text());
+      let newrows = d3.select('#zonesTable').selectAll('tr').data(zones).enter().append('tr')
+      newrows.append('td').attr('id', (z: any) => z.zoneName + 'Label')
+        .attr('class', 'ZoneLabel');
+      newrows.append('td').attr('id', (z: any) => z.zoneName + 'Temperature')
+        .attr('class', 'ZoneTemperature');
+      d3.select('#zonesTable').selectAll('.ZoneTemperature')
+        .data(zones).text((z: any) => z.temperature);
+      d3.select('#zonesTable').selectAll('.ZoneLabel').data(zones).text((z: any) => z.zoneName);
     });
     // this.title.getData().subscribe(data => this.data = data);
   }

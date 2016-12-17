@@ -125,11 +125,13 @@ class HoneywellClient {
   getLocationStatus(locationId: string, locationName: string) {
     this.serverGet(`/location/${locationId}/status?includeTemperatureControlSystems=True`,
      (obj: any) => {
+       console.log('respone %j', obj);
        for (let gateway of obj.gateways) {
           for (let system of gateway.temperatureControlSystems) {
             for (let zone of system.zones) {
               const nzone = new Zone(zone.zoneId, zone.name, zone.zoneType,
-                                     locationId, locationName, zone.temperature);
+                                     locationId, locationName, zone.temperatureStatus.temperature);
+              console.log('zone %j temp %d', nzone, zone.temperature);
               this.zones.push(nzone);
             }
           }
@@ -143,7 +145,7 @@ let hcli = (new HoneywellClient());
 hcli.login();
 
 app.get('/dickon', (req, res) => {
-  res.send(JSON.stringify(hcli.zones.map((zone: Zone) => zone.zoneName).join()));
+  res.send(JSON.stringify(hcli.zones));
 });
 
 app.get('/mock', (req, res) => {
